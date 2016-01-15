@@ -12,7 +12,7 @@ const EmberSnip = Component.extend({
   tagName: 'ember-snip',
 
   cancel: null,
-  _distance: 50,
+  _distance: 0,
 
   _moved: false,
   _offset: null,
