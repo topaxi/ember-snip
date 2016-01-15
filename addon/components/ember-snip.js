@@ -12,7 +12,9 @@ const EmberSnip = Component.extend({
   tagName: 'ember-snip',
 
   cancel: null,
+  _distance: 50,
 
+  _moved: false,
   _offset: null,
   _dimensions: null,
   _startPosition: null,
@@ -61,11 +63,17 @@ const EmberSnip = Component.extend({
   },
 
   end(e) {
+    this._moved = false
     this._$document.off('.ember-snip')
     this.sendAction('on-end', e, this)
   },
 
   move(e) {
+    if (this._notMovedBeyondDistance(e)) {
+      return
+    }
+
+    this._moved = true
     this._setLastPosition(this._currentPosition)
     this._setCurrentPosition(e)
 
@@ -101,6 +109,15 @@ const EmberSnip = Component.extend({
     this._dimensions.height     = this.element.clientHeight
     this._dimensions.scrollTop  = this.element.scrollTop
     this._dimensions.scrollLeft = this.element.scrollLeft
+  },
+
+  _notMovedBeyondDistance(pos) {
+    if (!this._moved && !this._distance) {
+      return false
+    }
+
+    return abs(this._startPosition.pageX - pos.pageX) < this._distance &&
+           abs(this._startPosition.pageY - pos.pageY) < this._distance
   },
 
   _setCurrentPosition(pos) {
