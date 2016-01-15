@@ -17,7 +17,10 @@ export default Component.extend({
 
   style: computed('top', 'left', 'width', 'height', function() {
     return htmlSafe(
-      `top:${this.get('top')|0}px;left:${this.get('left')|0}px;width:${this.get('width')|0}px;height:${this.get('height')|0}px`
+      `top:${this.get('top')|0}px;` +
+      `left:${this.get('left')|0}px;` +
+      `width:${this.get('width')|0}px;` +
+      `height:${this.get('height')|0}px`
     )
   }),
 
