@@ -48,13 +48,18 @@ const EmberSnip = Component.extend({
     e.preventDefault()
 
     this._updateElementDimensions()
-    this._setStartPosition(e)
-    this._setCurrentPosition(e)
+    this._setStartPosition(this._eventToPosition(e))
+    this._setCurrentPosition(this._startPosition)
     this._setLastPosition({ pageX: 0, pageY: 0 })
 
-    this._$document.on('mouseup.ember-snip touchend.ember-snip', e => this.end(e))
-                   .on('mousemove.ember-snip touchmove.ember-snip', e => this.move(e))
-                   .on('mousewheel.ember-snip', preventDefault)
+    this._$document.on('mouseup.ember-snip touchend.ember-snip', e =>
+      this.end(e)
+    )
+    .on('mousemove.ember-snip touchmove.ember-snip', e =>
+      this.move(this._eventToPosition(e))
+    )
+    .on('mousewheel.ember-snip', preventDefault)
+
     this.sendAction('on-start', e)
   },
 
@@ -91,6 +96,14 @@ const EmberSnip = Component.extend({
 
   touchStart(e) {
     this.start(e)
+  },
+
+  _eventToPosition(e) {
+    if (e.originalEvent.changedTouches) {
+      return e.originalEvent.changedTouches[0]
+    }
+
+    return e
   },
 
   _clickedScrollbar(pos) {
