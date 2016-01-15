@@ -69,7 +69,7 @@ const EmberSnip = Component.extend({
   },
 
   move(e) {
-    if (this._notMovedBeyondDistance(e)) {
+    if (!this._moved && this._notMovedBeyondDistance(e)) {
       return
     }
 
@@ -112,7 +112,7 @@ const EmberSnip = Component.extend({
   },
 
   _notMovedBeyondDistance(pos) {
-    if (!this._moved && !this._distance) {
+    if (!this._distance) {
       return false
     }
 
