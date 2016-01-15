@@ -116,8 +116,8 @@ const EmberSnip = Component.extend({
     let top  = this._offset.top  + ($el.outerHeight(false) - $el.innerHeight()) / 2
     let left = this._offset.left + ($el.outerWidth(false)  - $el.innerWidth())  / 2
 
-    this._dimensions.top        = top
-    this._dimensions.left       = left
+    this._dimensions.top        = top  | 0
+    this._dimensions.left       = left | 0
     this._dimensions.width      = this.element.clientWidth
     this._dimensions.height     = this.element.clientHeight
     this._dimensions.scrollTop  = this.element.scrollTop
