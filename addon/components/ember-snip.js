@@ -4,6 +4,8 @@ import layout    from '../templates/components/ember-snip'
 
 const LEFT_MOUSE     = 1
 const preventDefault = e => e.preventDefault()
+const on             = (el, type, fun) => el.addEventListener(type, fun, false)
+const off            = (el, type, fun) => el.removeEventListener(type, fun)
 const { abs, min }   = Math
 
 const EmberSnip = Component.extend({
@@ -29,7 +31,19 @@ const EmberSnip = Component.extend({
     this._startPosition   = {}
     this._currentPosition = {}
     this._lastPosition    = {}
-    this._$document       = $(document)
+
+    this.move = this.move.bind(this)
+    this.end  = this.end.bind(this)
+  },
+
+  _toggleMoveListeners(enable) {
+    let fn = enable ? on : off
+
+    fn(document, 'mouseup', this.end)
+    fn(document, 'touchend', this.end)
+    fn(document, 'mousemove', this.move)
+    fn(document, 'touchmove', this.move)
+    fn(document, 'mousewheel', preventDefault)
   },
 
   start(e) {
@@ -52,13 +66,7 @@ const EmberSnip = Component.extend({
     this._setCurrentPosition(this._startPosition)
     this._setLastPosition({ pageX: 0, pageY: 0 })
 
-    this._$document.on('mouseup.ember-snip touchend.ember-snip', e =>
-      this.end(e)
-    )
-    .on('mousemove.ember-snip touchmove.ember-snip', e =>
-      this.move(this._eventToPosition(e))
-    )
-    .on('mousewheel.ember-snip', preventDefault)
+    this._toggleMoveListeners(true)
 
     this.sendAction('on-start', e)
   },
@@ -69,18 +77,20 @@ const EmberSnip = Component.extend({
 
   end(e) {
     this._moved = false
-    this._$document.off('.ember-snip')
+    this._toggleMoveListeners(false)
     this.sendAction('on-end', e, this)
   },
 
   move(e) {
-    if (!this._moved && this._notMovedBeyondDistance(e)) {
+    let pos = this._eventToPosition(e)
+
+    if (!this._moved && this._notMovedBeyondDistance(pos)) {
       return
     }
 
     this._moved = true
     this._setLastPosition(this._currentPosition)
-    this._setCurrentPosition(e)
+    this._setCurrentPosition(pos)
 
     let rect = this._calcRect()
 
@@ -99,8 +109,8 @@ const EmberSnip = Component.extend({
   },
 
   _eventToPosition(e) {
-    if (e.originalEvent.changedTouches) {
-      return e.originalEvent.changedTouches[0]
+    if (e.changedTouches) {
+      return e.changedTouches[0]
     }
 
     return e
