@@ -2,6 +2,7 @@
 
 {{outlet}}
 
-{{#ember-snip}}
+{{#ember-snip as |snip|}}
   foo
+  {{snip.snipee foo=bar}}
 {{/ember-snip}}

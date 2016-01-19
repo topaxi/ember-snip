@@ -1,12 +1,13 @@
-import $         from 'jquery'
 import Component from 'ember-component'
 import layout    from '../templates/components/ember-snip'
 
-const LEFT_MOUSE     = 1
-const preventDefault = e => e.preventDefault()
-const on             = (el, type, fun) => el.addEventListener(type, fun, false)
-const off            = (el, type, fun) => el.removeEventListener(type, fun)
-const { abs, min }   = Math
+const { document }    = window
+const LEFT_MOUSE      = 1
+const preventDefault  = e => e.preventDefault()
+const on              = (el, type, fun) => el.addEventListener(type, fun, false)
+const off             = (el, type, fun) => el.removeEventListener(type, fun)
+const { abs, min }    = Math
+const EMPTY_RECTANGLE = new Rectangle(0, 0, 0, 0)
 
 const EmberSnip = Component.extend({
   layout,
@@ -15,6 +16,8 @@ const EmberSnip = Component.extend({
 
   cancel: null,
   _distance: 0,
+
+  snipee: 'ember-snipee',
 
   _moved: false,
   _offset: null,
@@ -39,10 +42,10 @@ const EmberSnip = Component.extend({
   _toggleMoveListeners(enable) {
     let fn = enable ? on : off
 
-    fn(document, 'mouseup', this.end)
-    fn(document, 'touchend', this.end)
-    fn(document, 'mousemove', this.move)
-    fn(document, 'touchmove', this.move)
+    fn(document, 'mouseup',    this.end)
+    fn(document, 'touchend',   this.end)
+    fn(document, 'mousemove',  this.move)
+    fn(document, 'touchmove',  this.move)
     fn(document, 'mousewheel', preventDefault)
   },
 
@@ -72,7 +75,7 @@ const EmberSnip = Component.extend({
   },
 
   'on-end'(e, self) {
-    self._updateSnipee({ top: 0, left: 0, width: 0, height: 0 })
+    self._updateSnipee(EMPTY_RECTANGLE)
   },
 
   end(e) {
@@ -165,23 +168,30 @@ const EmberSnip = Component.extend({
   },
 
   _calcRect() {
-    let top = min(this._startPosition.pageY, this._currentPosition.pageY) -
+    let x1 = min(this._startPosition.pageY, this._currentPosition.pageY) -
       this._dimensions.top +
       this._dimensions.scrollTop
 
-    let left = min(this._startPosition.pageX, this._currentPosition.pageX) -
+    let y1 = min(this._startPosition.pageX, this._currentPosition.pageX) -
       this._dimensions.left +
       this._dimensions.scrollLeft
 
-    let width  = abs(this._startPosition.pageX - this._currentPosition.pageX)
-    let height = abs(this._startPosition.pageY - this._currentPosition.pageY)
+    let x2 = x1 + abs(this._startPosition.pageX - this._currentPosition.pageX)
+    let y2 = y1 + abs(this._startPosition.pageY - this._currentPosition.pageY)
 
-    return { top, left, width, height }
+    return new Rectangle(x1, y1, x2, y2)
   },
 
   _updateSnipee(rect) {
-    this.get('snipee').setProperties(rect)
+    this.get('snipee').setRectangle(rect)
   }
 })
+
+function Rectangle(x1, y1, x2, y2) {
+  this.x1 = x1
+  this.y1 = y1
+  this.x2 = x2
+  this.y2 = y2
+}
 
 export default EmberSnip

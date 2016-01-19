@@ -1,2 +1,5 @@
-{{yield}}
-{{ember-snipee snip=this}}
+{{#if hasBlock}}
+  {{yield (hash snipee = (component snipee _snip=this))}}
+{{else}}
+  {{ember-snipee _snip=this}}
+{{/if}}

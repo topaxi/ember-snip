@@ -10,21 +10,30 @@ export default Component.extend({
 
   attributeBindings: [ 'style' ],
 
-  top: 0,
-  left: 0,
-  width: 0,
-  height: 0,
+  x1: 0,
+  y1: 0,
+  x2: 0,
+  y2: 0,
 
-  style: computed('top', 'left', 'width', 'height', function() {
+  setRectangle(rect) {
+    this.setProperties(rect)
+  },
+
+  style: computed('x1', 'y1', 'x2', 'y2', function() {
+    let x1 = this.get('x1') | 0
+    let y1 = this.get('y1') | 0
+    let x2 = this.get('x2') | 0
+    let y2 = this.get('y2') | 0
+
     return htmlSafe(
-      `top:${this.get('top')|0}px;` +
-      `left:${this.get('left')|0}px;` +
-      `width:${this.get('width')|0}px;` +
-      `height:${this.get('height')|0}px`
+      `top:${x1}px;` +
+      `left:${y1}px;` +
+      `width:${x2 - x1}px;` +
+      `height:${y2 - y1}px`
     )
   }),
 
-  snip: computed({
+  _snip: computed({
     set(key, snip) {
       snip.set('snipee', this)
     }
