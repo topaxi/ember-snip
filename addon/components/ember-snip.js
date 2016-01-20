@@ -15,6 +15,7 @@ const EmberSnip = Component.extend({
 
   tagName: 'ember-snip',
 
+  disabled: false,
   cancel: null,
   _distance: 0,
 
@@ -49,7 +50,7 @@ const EmberSnip = Component.extend({
   },
 
   start(e) {
-    if (this._isCancelled(e)) {
+    if (this.get('disabled') || this._isCancelled(e)) {
       return
     }
 
