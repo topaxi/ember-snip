@@ -76,7 +76,7 @@ const EmberSnip = Component.extend({
   },
 
   'on-end'(e, self) {
-    self._updateSnipee(EMPTY_RECTANGLE)
+    self.hideSnipee()
   },
 
   end(e) {
@@ -114,6 +114,10 @@ const EmberSnip = Component.extend({
 
   touchStart(e) {
     this.start(e)
+  },
+
+  hideSnipee() {
+    this._updateSnipee(EMPTY_RECTANGLE)
   },
 
   _eventDataForPoint(e) {
