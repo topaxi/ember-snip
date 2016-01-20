@@ -5,7 +5,7 @@ import {
   htmlSafe
 } from 'ember-string'
 
-const { floor, ceil } = Math
+const { floor, ceil, max } = Math
 
 export default Component.extend({
   tagName: 'ember-snipee',
@@ -49,8 +49,9 @@ function roundTo(value, to, fn) {
 
 function computedSnapAxis(x1, x2, snap) {
   return computed('rectangle', snap, function snapAxis() {
-    let rect = this.get('rectangle')
+    let rect   = this.get('rectangle')
+    let snapTo = max(this.get(snap), 1)
 
-    return roundTo(rect[x1], this.get(snap), rect[x1] > rect[x2] ? ceil : floor)
+    return roundTo(rect[x1], snapTo, rect[x1] > rect[x2] ? ceil : floor)
   }).readOnly()
 }
