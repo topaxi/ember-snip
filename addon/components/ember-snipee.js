@@ -22,7 +22,7 @@ export default Component.extend({
   x2: computedSnapAxis('x2', 'x1', 'snapX'),
   y2: computedSnapAxis('y2', 'y1', 'snapY'),
 
-  style: computed('x1', 'y1', 'x2', 'y2', function() {
+  style: computed('x1', 'y1', 'x2', 'y2', function style() {
     let x1 = this.get('x1')
     let y1 = this.get('y1')
     let x2 = this.get('x2')
