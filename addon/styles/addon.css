@@ -1,9 +1,4 @@
 ember-snip {
-  position: relative;
-  display: flex;
-  width: 800px;
-  height: 640px;
-  border: 1px solid;
   overflow: auto;
 }
 
