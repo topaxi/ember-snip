@@ -8,6 +8,7 @@ const on              = (el, type, fun) => el.addEventListener(type, fun, false)
 const off             = (el, type, fun) => el.removeEventListener(type, fun)
 const { abs, min }    = Math
 const EMPTY_RECTANGLE = new Rectangle(0, 0, 0, 0)
+const ZERO_POINT      = new Point(0, 0)
 
 const EmberSnip = Component.extend({
   layout,
@@ -22,18 +23,16 @@ const EmberSnip = Component.extend({
   _moved: false,
   _offset: null,
   _dimensions: null,
-  _startPosition: null,
-  _currentPosition: null,
-  _lastPosition: null,
+  _startPoint: null,
+  _currentPoint: null,
+  _lastPoint: null,
 
   init() {
     this._super(...arguments)
 
-    this._offset          = null
-    this._dimensions      = {}
-    this._startPosition   = {}
-    this._currentPosition = {}
-    this._lastPosition    = {}
+    this._startPoint   = ZERO_POINT
+    this._currentPoint = ZERO_POINT
+    this._lastPoint    = ZERO_POINT
 
     this.move = this.move.bind(this)
     this.end  = this.end.bind(this)
@@ -54,20 +53,22 @@ const EmberSnip = Component.extend({
       return
     }
 
-    let $el = this.$()
+    let $el   = this.$()
+    let point = this._eventToPoint(this._eventDataForPoint(e))
 
     this._offset = $el.offset()
 
-    if (this._clickedScrollbar(e)) {
+
+    if (this._clickedScrollbar(point)) {
       return
     }
 
     e.preventDefault()
 
     this._updateElementDimensions()
-    this._setStartPosition(this._eventToPosition(e))
-    this._setCurrentPosition(this._startPosition)
-    this._setLastPosition({ pageX: 0, pageY: 0 })
+    this._setStartPoint(point)
+    this._setCurrentPoint(this._startPoint)
+    this._setLastPoint(ZERO_POINT)
 
     this._toggleMoveListeners(true)
 
@@ -85,17 +86,21 @@ const EmberSnip = Component.extend({
   },
 
   move(e) {
-    let pos = this._eventToPosition(e)
+    let point = this._eventToPoint(this._eventDataForPoint(e))
 
-    if (!this._moved && this._notMovedBeyondDistance(pos)) {
+    if (!this._moved && this._notMovedBeyondDistance(point)) {
       return
     }
 
     this._moved = true
-    this._setLastPosition(this._currentPosition)
-    this._setCurrentPosition(pos)
+    this._setLastPoint(this._currentPoint)
+    this._setCurrentPoint(point)
 
-    let rect = this._calcRect()
+    let rect = this._createRectangle(
+      this._dimensions,
+      this._startPoint,
+      this._currentPoint
+    )
 
     this._updateSnipee(rect)
     this.sendAction('on-move', rect)
@@ -111,7 +116,7 @@ const EmberSnip = Component.extend({
     this.start(e)
   },
 
-  _eventToPosition(e) {
+  _eventDataForPoint(e) {
     if (e.changedTouches) {
       return e.changedTouches[0]
     }
@@ -119,9 +124,13 @@ const EmberSnip = Component.extend({
     return e
   },
 
-  _clickedScrollbar(pos) {
-    return pos.pageX > this._offset.left + this.element.clientWidth ||
-           pos.pageY > this._offset.top  + this.element.clientHeight
+  _eventToPoint(e) {
+    return new Point(e.pageX, e.pageY)
+  },
+
+  _clickedScrollbar(point) {
+    return point.x > this._offset.left + this.element.clientWidth ||
+           point.y > this._offset.top  + this.element.clientHeight
   },
 
   _updateElementDimensions() {
@@ -129,69 +138,96 @@ const EmberSnip = Component.extend({
     let top  = this._offset.top  + ($el.outerHeight(false) - $el.innerHeight()) / 2
     let left = this._offset.left + ($el.outerWidth(false)  - $el.innerWidth())  / 2
 
-    this._dimensions.top        = top  | 0
-    this._dimensions.left       = left | 0
-    this._dimensions.width      = this.element.clientWidth
-    this._dimensions.height     = this.element.clientHeight
-    this._dimensions.scrollTop  = this.element.scrollTop
-    this._dimensions.scrollLeft = this.element.scrollLeft
+    this._dimensions = new ElementDimension({
+      top,
+      left,
+      width:      this.element.clientWidth,
+      height:     this.element.clientHeight,
+      scrollTop:  this.element.scrollTop,
+      scrollLeft: this.element.scrollLeft
+    })
   },
 
-  _notMovedBeyondDistance(pos) {
+  _notMovedBeyondDistance(point) {
     if (!this._distance) {
       return false
     }
 
-    return abs(this._startPosition.pageX - pos.pageX) < this._distance &&
-           abs(this._startPosition.pageY - pos.pageY) < this._distance
+    return abs(this._startPoint.x - point.x) < this._distance &&
+           abs(this._startPoint.y - point.y) < this._distance
   },
 
-  _setCurrentPosition(pos) {
-    this._setPosition('_currentPosition', pos)
+  _setCurrentPoint(point) {
+    this._setPoint('_currentPoint', point)
   },
 
-  _setStartPosition(pos) {
-    this._setPosition('_startPosition', pos)
+  _setStartPoint(point) {
+    this._setPoint('_startPoint', point)
   },
 
-  _setLastPosition(pos) {
-    this._setPosition('_lastPosition', pos)
+  _setLastPoint(point) {
+    this._setPoint('_lastPoint', point)
   },
 
-  _setPosition(prop, pos) {
-    this[prop].pageX = pos.pageX
-    this[prop].pageY = pos.pageY
+  _setPoint(prop, point) {
+    this[prop] = point
   },
 
   _isCancelled(e) {
     return this.get('cancel') && this.$(e.target).is(this.get('cancel'))
   },
 
-  _calcRect() {
-    let x1 = min(this._startPosition.pageY, this._currentPosition.pageY) -
-      this._dimensions.top +
-      this._dimensions.scrollTop
+  _createRectangle(dimensions, p1, p2) {
+    let x1 = min(p1.x, p2.x) -
+      dimensions.left +
+      dimensions.scrollLeft
 
-    let y1 = min(this._startPosition.pageX, this._currentPosition.pageX) -
-      this._dimensions.left +
-      this._dimensions.scrollLeft
+    let y1 = min(p1.y, p2.y) -
+      dimensions.top +
+      dimensions.scrollTop
 
-    let x2 = x1 + abs(this._startPosition.pageX - this._currentPosition.pageX)
-    let y2 = y1 + abs(this._startPosition.pageY - this._currentPosition.pageY)
+    let x2 = x1 + abs(p1.x - p2.x)
+    let y2 = y1 + abs(p1.y - p2.y)
 
     return new Rectangle(x1, y1, x2, y2)
   },
 
   _updateSnipee(rect) {
-    this.get('snipee').setRectangle(rect)
+    this.get('snipee').set('rectangle', rect)
   }
 })
 
+function Point(x, y) {
+  this.x = x | 0
+  this.y = y | 0
+
+  //Object.freeze(this)
+}
+
 function Rectangle(x1, y1, x2, y2) {
-  this.x1 = x1
-  this.y1 = y1
-  this.x2 = x2
-  this.y2 = y2
+  this.x1 = x1 | 0
+  this.y1 = y1 | 0
+  this.x2 = x2 | 0
+  this.y2 = y2 | 0
+
+  //Object.freeze(this)
+}
+
+function ElementDimension(props) {
+  this.top        = props.top        | 0
+  this.left       = props.left       | 0
+  this.width      = props.width      | 0
+  this.height     = props.height     | 0
+  this.scrollTop  = props.scrollTop  | 0
+  this.scrollLeft = props.scrollLeft | 0
+
+  //Object.freeze(this)
+}
+
+if (Symbol.toStringTag) {
+  Point.prototype[Symbol.toStringTag] = 'Point'
+  Rectangle.prototype[Symbol.toStringTag] = 'Rectangle'
+  ElementDimension.prototype[Symbol.toStringTag] = 'ElementDimension'
 }
 
 export default EmberSnip

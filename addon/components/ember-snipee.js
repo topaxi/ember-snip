@@ -5,33 +5,36 @@ import {
   htmlSafe
 } from 'ember-string'
 
+const { floor, ceil } = Math
+
 export default Component.extend({
   tagName: 'ember-snipee',
 
   attributeBindings: [ 'style' ],
 
-  x1: 0,
-  y1: 0,
-  x2: 0,
-  y2: 0,
+  rectangle: {},
 
-  setRectangle(rect) {
-    this.setProperties(rect)
-  },
+  snapX: 1,
+  snapY: 1,
 
-  style: computed('x1', 'y1', 'x2', 'y2', function() {
-    let x1 = this.get('x1') | 0
-    let y1 = this.get('y1') | 0
-    let x2 = this.get('x2') | 0
-    let y2 = this.get('y2') | 0
+  x1: computedSnapAxis('x1', 'x2', 'snapX'),
+  y1: computedSnapAxis('y1', 'y2', 'snapY'),
+  x2: computedSnapAxis('x2', 'x1', 'snapX'),
+  y2: computedSnapAxis('y2', 'y1', 'snapY'),
+
+  style: computed('x1', 'y1', 'x2', 'y2', 'snapX', 'snapY', function() {
+    let x1 = this.get('x1')
+    let y1 = this.get('y1')
+    let x2 = this.get('x2')
+    let y2 = this.get('y2')
 
     return htmlSafe(
-      `top:${x1}px;` +
-      `left:${y1}px;` +
+      `top:${y1}px;` +
+      `left:${x1}px;` +
       `width:${x2 - x1}px;` +
       `height:${y2 - y1}px`
     )
-  }),
+  }).readOnly(),
 
   _snip: computed({
     set(key, snip) {
@@ -39,3 +42,15 @@ export default Component.extend({
     }
   })
 })
+
+function roundTo(value, to, fn) {
+  return fn(value / to) * to
+}
+
+function computedSnapAxis(x1, x2, snap) {
+  return computed('rectangle', snap, function snapAxis() {
+    let rect = this.get('rectangle')
+
+    return roundTo(rect[x1], this.get(snap), rect[x1] > rect[x2] ? ceil : floor)
+  }).readOnly()
+}
