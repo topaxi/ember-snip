@@ -12,7 +12,7 @@ export default Component.extend({
 
   attributeBindings: [ 'style' ],
 
-  rectangle: {},
+  rectangle: null,
 
   snapX: 1,
   snapY: 1,

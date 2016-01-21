@@ -27,6 +27,7 @@ const EmberSnip = Component.extend({
   _startPoint: null,
   _currentPoint: null,
   _lastPoint: null,
+  _rectangle: null,
 
   init() {
     this._super(...arguments)
@@ -34,6 +35,7 @@ const EmberSnip = Component.extend({
     this._startPoint   = ZERO_POINT
     this._currentPoint = ZERO_POINT
     this._lastPoint    = ZERO_POINT
+    this._rectangle    = EMPTY_RECTANGLE
 
     this.move = this.move.bind(this)
     this.end  = this.end.bind(this)
@@ -200,11 +202,7 @@ const EmberSnip = Component.extend({
   },
 
   _updateSnipee(rect) {
-    let [ snipee ] = this.childViews
-
-    if (snipee) {
-      snipee.set('rectangle', rect)
-    }
+    this.set('_rectangle', rect)
   }
 })
 

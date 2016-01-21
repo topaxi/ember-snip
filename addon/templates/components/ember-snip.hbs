@@ -1,5 +1,5 @@
 {{#if hasBlock}}
-  {{yield (hash snipee = (component snipee))}}
+  {{yield (hash snipee = (component snipee rectangle=_rectangle))}}
 {{else}}
-  {{component snipee}}
+  {{component snipee rectangle=_rectangle}}
 {{/if}}
