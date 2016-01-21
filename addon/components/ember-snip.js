@@ -83,7 +83,9 @@ const EmberSnip = Component.extend({
   end(e) {
     this._moved = false
     this._toggleMoveListeners(false)
-    this.sendAction('on-end', e, this)
+    this.sendAction('on-end', e, {
+      hideSnipee: () => this.hideSnipee()
+    })
   },
 
   move(e) {
