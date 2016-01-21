@@ -1,0 +1,7 @@
+ember-snip {
+  display: flex;
+  height: 768px;
+  position: relative;
+  border: 1px solid black;
+  padding: 4rem;
+}

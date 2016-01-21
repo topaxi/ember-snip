@@ -198,7 +198,11 @@ const EmberSnip = Component.extend({
   },
 
   _updateSnipee(rect) {
-    this.get('snipee').set('rectangle', rect)
+    let [ snipee ] = this.childViews
+
+    if (snipee) {
+      snipee.set('rectangle', rect)
+    }
   }
 })
 

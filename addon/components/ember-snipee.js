@@ -34,13 +34,7 @@ export default Component.extend({
       `width:${x2 - x1}px;` +
       `height:${y2 - y1}px`
     )
-  }).readOnly(),
-
-  _snip: computed({
-    set(key, snip) {
-      snip.set('snipee', this)
-    }
-  })
+  }).readOnly()
 })
 
 function roundTo(value, to, fn) {

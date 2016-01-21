@@ -1,8 +1,9 @@
 <h2 id="title">Welcome to Ember</h2>
 
-{{outlet}}
+X: {{input value=snapX}}
+Y: {{input value=snapY}}
 
 {{#ember-snip as |snip|}}
   foo
-  {{#snip.snipee snapX=100 snapY=50}}{{/snip.snipee}}
+  {{#snip.snipee snapX=snapX snapY=snapY}}{{/snip.snipee}}
 {{/ember-snip}}
