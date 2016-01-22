@@ -1,6 +1,7 @@
 ember-snip {
   display: flex;
-  height: 768px;
+  width: 640px;
+  height: 320px;
   position: relative;
   border: 1px solid black;
   padding: 4rem;

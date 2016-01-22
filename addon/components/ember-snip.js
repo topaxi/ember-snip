@@ -1,4 +1,5 @@
 import Component from 'ember-component'
+import computed  from 'ember-computed'
 import layout    from '../templates/components/ember-snip'
 
 const { document }    = window
@@ -14,20 +15,24 @@ const EmberSnip = Component.extend({
   layout,
 
   tagName: 'ember-snip',
+  snipee:  'ember-snipee',
 
   disabled: false,
-  cancel: null,
-  _distance: 0,
+  cancel:   null,
+  distance: 0,
 
-  snipee: 'ember-snipee',
+  cancelOffset: true,
+  offsetTop:    computedInt(),
+  offsetLeft:   computedInt(),
+  offsetRight:  computedInt(),
+  offsetBottom: computedInt(),
 
-  _moved: false,
-  _offset: null,
-  _dimensions: null,
-  _startPoint: null,
+  _moved:        false,
+  _dimensions:   null,
+  _startPoint:   null,
   _currentPoint: null,
-  _lastPoint: null,
-  _rectangle: null,
+  _lastPoint:    null,
+  _rectangle:    null,
 
   init() {
     this._super(...arguments)
@@ -56,22 +61,19 @@ const EmberSnip = Component.extend({
       return
     }
 
-    let $el   = this.$()
     let point = this._eventToPoint(this._eventDataForPoint(e))
 
-    this._offset = $el.offset()
+    this._updateElementDimensions()
 
-
-    if (this._clickedScrollbar(point)) {
+    if (this._clickedScrollbar(point) || this._clickedOffset(point)) {
       return
     }
 
     e.preventDefault()
 
-    this._updateElementDimensions()
     this._setStartPoint(point)
-    this._setCurrentPoint(this._startPoint)
-    this._setLastPoint(ZERO_POINT)
+    this._setCurrentPoint(point)
+    this._setLastPoint(point)
 
     this._toggleMoveListeners(true)
 
@@ -102,7 +104,7 @@ const EmberSnip = Component.extend({
     this._setCurrentPoint(point)
 
     let rect = this._createRectangle(
-      this._dimensions,
+      this.get('_dimensions'),
       this._startPoint,
       this._currentPoint
     )
@@ -137,33 +139,54 @@ const EmberSnip = Component.extend({
     return new Point(e.pageX, e.pageY)
   },
 
-  _clickedScrollbar(point) {
-    return point.x > this._offset.left + this.element.clientWidth ||
-           point.y > this._offset.top  + this.element.clientHeight
-  },
-
-  _updateElementDimensions() {
-    let $el  = this.$()
-    let top  = this._offset.top  + ($el.outerHeight(false) - $el.innerHeight()) / 2
-    let left = this._offset.left + ($el.outerWidth(false)  - $el.innerWidth())  / 2
-
-    this._dimensions = new ElementDimension({
-      top,
-      left,
-      width:      this.element.clientWidth,
-      height:     this.element.clientHeight,
-      scrollTop:  this.element.scrollTop,
-      scrollLeft: this.element.scrollLeft
-    })
-  },
-
-  _notMovedBeyondDistance(point) {
-    if (!this._distance) {
+  _clickedOffset(point) {
+    if (!this.get('cancelOffset')) {
       return false
     }
 
-    return abs(this._startPoint.x - point.x) < this._distance &&
-           abs(this._startPoint.y - point.y) < this._distance
+    let dimensions = this.get('_dimensions')
+
+    let left = point.x - dimensions.left
+    let top  = point.y - dimensions.top
+
+    return left < this.get('offsetLeft') ||
+           top  < this.get('offsetTop')  ||
+           left > dimensions.width  - this.get('offsetRight') ||
+           top  > dimensions.height - this.get('offsetBottom')
+  },
+
+  _clickedScrollbar(point) {
+    let dimensions = this.get('_dimensions')
+    return point.x > dimensions.left + dimensions.width ||
+           point.y > dimensions.top  + dimensions.height
+  },
+
+  _updateElementDimensions() {
+    let $el = this.$()
+
+    let { top, left, height, width } = this.element.getBoundingClientRect()
+    let { scrollTop, scrollLeft }    = this.element
+
+    top  += ($el.outerHeight(false) - height) / 2
+    left += ($el.outerWidth(false)  - width)  / 2
+
+    this.set('_dimensions', new ElementDimension({
+      top,
+      left,
+      width,
+      height,
+      scrollTop,
+      scrollLeft
+    }))
+  },
+
+  _notMovedBeyondDistance(point) {
+    if (!this.distance) {
+      return false
+    }
+
+    return abs(this._startPoint.x - point.x) < this.distance &&
+           abs(this._startPoint.y - point.y) < this.distance
   },
 
   _setCurrentPoint(point) {
@@ -183,7 +206,7 @@ const EmberSnip = Component.extend({
   },
 
   _isCancelled(e) {
-    return this.get('cancel') && this.$(e.target).is(this.get('cancel'))
+    return this.get('cancel') && e.target.matches(this.get('cancel'))
   },
 
   _createRectangle(dimensions, p1, p2) {
@@ -237,6 +260,17 @@ if (Symbol.toStringTag) {
   Point.prototype[Symbol.toStringTag] = 'Point'
   Rectangle.prototype[Symbol.toStringTag] = 'Rectangle'
   ElementDimension.prototype[Symbol.toStringTag] = 'ElementDimension'
+}
+
+function computedInt() {
+  return computed({
+    set(key, value) {
+      return value | 0
+    },
+    get(key, value) {
+      return value | 0
+    }
+  })
 }
 
 export default EmberSnip

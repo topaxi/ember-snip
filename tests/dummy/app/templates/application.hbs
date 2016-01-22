@@ -1,9 +1,27 @@
 <h2 id="title">Welcome to Ember</h2>
 
-X: {{input value=snapX}}
-Y: {{input value=snapY}}
+<div>
+  X: {{input type="number" value=snapX}}
+  Y: {{input type="number" value=snapY}}
+</div>
+<div>
+  offsetTop:  {{input type="number" value=offsetTop}}
+  offsetLeft: {{input type="number" value=offsetLeft}}
+  Constrain:  {{input type="checkbox" checked=cancelOffset}}
+</div>
 
-{{#ember-snip as |snip|}}
+{{#ember-snip
+  offsetTop    = offsetTop
+  offsetLeft   = offsetLeft
+  offsetRight  = 100
+  offsetBottom = 100
+  cancelOffset = cancelOffset
+  on-end       = undefined
+  as |snip|}}
   foo
-  {{#snip.snipee snapX=snapX snapY=snapY}}{{/snip.snipee}}
+  {{snip.snipee
+    snapX = snapX
+    snapY = snapY
+    }}
+  {{snip.snipee}}
 {{/ember-snip}}

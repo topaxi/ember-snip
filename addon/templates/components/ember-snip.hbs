@@ -1,5 +1,25 @@
 {{#if hasBlock}}
-  {{yield (hash snipee = (component snipee rectangle=_rectangle))}}
+  {{yield
+    (hash
+      snipee = (component snipee
+        rectangle         = _rectangle
+        _offsetTop        = offsetTop
+        _offsetRight      = offsetRight
+        _offsetBottom     = offsetBottom
+        _offsetLeft       = offsetLeft
+        _restrictToOffset = cancelOffset
+        _dimensions       = _dimensions
+      )
+    )
+    }}
 {{else}}
-  {{component snipee rectangle=_rectangle}}
+  {{component snipee
+    rectangle         = _rectangle
+    _offsetTop        = offsetTop
+    _offsetRight      = offsetRight
+    _offsetBottom     = offsetBottom
+    _offsetLeft       = offsetLeft
+    _restrictToOffset = cancelOffset
+    _dimensions       = _dimensions
+    }}
 {{/if}}

@@ -1,11 +1,14 @@
 import Component from 'ember-component'
-import computed  from 'ember-computed'
+
+import computed, {
+  oneWay
+} from 'ember-computed'
 
 import {
   htmlSafe
 } from 'ember-string'
 
-const { floor, ceil, max } = Math
+const { floor, ceil, min, max } = Math
 
 export default Component.extend({
   tagName: 'ember-snipee',
@@ -14,13 +17,27 @@ export default Component.extend({
 
   rectangle: null,
 
+  minX: oneWay('_offsetLeft'),
+  minY: oneWay('_offsetTop'),
+  maxX: computed('_offsetRight', '_dimensions', function() {
+    return this.get('_dimensions.width') - this.get('_offsetRight')
+  }),
+  maxY: computed('_offsetBottom', '_dimensions', function() {
+    return this.get('_dimensions.height') - this.get('_offsetBottom')
+  }),
+
   snapX: 1,
   snapY: 1,
 
-  x1: computedSnapAxis('x1', 'x2', 'snapX'),
-  y1: computedSnapAxis('y1', 'y2', 'snapY'),
-  x2: computedSnapAxis('x2', 'x1', 'snapX'),
-  y2: computedSnapAxis('y2', 'y1', 'snapY'),
+  _dimensions:       null,
+  _restrictToOffset: null,
+  _offsetTop:        null,
+  _offsetLeft:       null,
+
+  x1: computedSnapAxis('x1', 'x2', '_offsetLeft', 'X'),
+  y1: computedSnapAxis('y1', 'y2', '_offsetTop',  'Y'),
+  x2: computedSnapAxis('x2', 'x1', '_offsetLeft', 'X'),
+  y2: computedSnapAxis('y2', 'y1', '_offsetTop',  'Y'),
 
   style: computed('x1', 'y1', 'x2', 'y2', function style() {
     let x1 = this.get('x1')
@@ -41,11 +58,25 @@ function roundTo(value, to, fn) {
   return fn(value / to) * to
 }
 
-function computedSnapAxis(x1, x2, snap) {
-  return computed('rectangle', snap, function snapAxis() {
-    let rect   = this.get('rectangle')
-    let snapTo = max(this.get(snap), 1)
+function computedSnapAxis(x1, x2, offsetProperty, X) {
+  let snapProperty = `snap${X}`
+  let minX         = `min${X}`
+  let maxX         = `max${X}`
+  let dependentKeys = [
+    'rectangle',
+    offsetProperty,
+    snapProperty,
+    minX,
+    maxX
+  ]
 
-    return roundTo(rect[x1], snapTo, rect[x1] > rect[x2] ? ceil : floor)
+  return computed(...dependentKeys, function snapAxis() {
+    let rect    = this.get('rectangle')
+    let snapTo  = max(this.get(snapProperty) | 0, 1)
+    let offset  = this.get(offsetProperty) | 0
+    let roundFn = rect[x1] > rect[x2] ? ceil : floor
+    let x       = roundTo(rect[x1] - offset, snapTo, roundFn)
+
+    return min(this.get(maxX), max(this.get(minX), x + offset))
   }).readOnly()
 }
