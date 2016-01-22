@@ -67,7 +67,8 @@ function computedSnapAxis(x1, x2, offsetProperty, X) {
     offsetProperty,
     snapProperty,
     minX,
-    maxX
+    maxX,
+    '_restrictToOffset'
   ]
 
   return computed(...dependentKeys, function snapAxis() {
@@ -75,8 +76,12 @@ function computedSnapAxis(x1, x2, offsetProperty, X) {
     let snapTo  = max(this.get(snapProperty) | 0, 1)
     let offset  = this.get(offsetProperty) | 0
     let roundFn = rect[x1] > rect[x2] ? ceil : floor
-    let x       = roundTo(rect[x1] - offset, snapTo, roundFn)
+    let x       = roundTo(rect[x1] - offset, snapTo, roundFn) + offset
 
-    return min(this.get(maxX), max(this.get(minX), x + offset))
+    if (this.get('_restrictToOffset')) {
+      return min(this.get(maxX), max(this.get(minX), x))
+    }
+
+    return x
   }).readOnly()
 }
