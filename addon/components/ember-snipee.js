@@ -8,6 +8,8 @@ import {
   htmlSafe
 } from 'ember-string'
 
+import computedInt from '../lib/computed-int'
+
 const { floor, ceil, min, max } = Math
 
 export default Component.extend({
@@ -26,8 +28,8 @@ export default Component.extend({
     return this.get('_dimensions.height') - this.get('_offsetBottom')
   }),
 
-  snapX: 1,
-  snapY: 1,
+  snapX: computedInt(),
+  snapY: computedInt(),
 
   _dimensions:       null,
   _restrictToOffset: null,
@@ -38,6 +40,12 @@ export default Component.extend({
   y1: computedSnapAxis('y1', 'y2', '_offsetTop',  'Y'),
   x2: computedSnapAxis('x2', 'x1', '_offsetLeft', 'X'),
   y2: computedSnapAxis('y2', 'y1', '_offsetTop',  'Y'),
+
+  init(...args) {
+    this._super(...args)
+    this.set('snapX', 1)
+    this.set('snapY', 1)
+  },
 
   style: computed('x1', 'y1', 'x2', 'y2', function style() {
     let x1 = this.get('x1')

@@ -2,6 +2,7 @@ import Component from 'ember-component'
 import computed  from 'ember-computed'
 import layout    from '../templates/components/ember-snip'
 
+import computedInt       from '../lib/computed-int'
 import ElementDimensions from '../lib/element-dimensions'
 
 import Point, {
@@ -239,16 +240,5 @@ const EmberSnip = Component.extend({
     this.set('_rectangle', rect)
   }
 })
-
-function computedInt() {
-  return computed({
-    set(key, value) {
-      return value | 0
-    },
-    get(key, value) {
-      return value | 0
-    }
-  })
-}
 
 export default EmberSnip
