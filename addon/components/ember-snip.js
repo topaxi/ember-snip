@@ -2,14 +2,25 @@ import Component from 'ember-component'
 import computed  from 'ember-computed'
 import layout    from '../templates/components/ember-snip'
 
-const { document }    = window
-const LEFT_MOUSE      = 1
-const preventDefault  = e => e.preventDefault()
-const on              = (el, type, fun) => el.addEventListener(type, fun, false)
-const off             = (el, type, fun) => el.removeEventListener(type, fun)
-const { abs, min }    = Math
-const EMPTY_RECTANGLE = new Rectangle(0, 0, 0, 0)
-const ZERO_POINT      = new Point(0, 0)
+import ElementDimensions from '../lib/element-dimensions'
+
+import Point, {
+  ZERO_POINT
+} from '../lib/point'
+
+import Rectangle, {
+  ZERO_RECTANGLE
+} from '../lib/rectangle'
+
+import {
+  on,
+  off,
+  preventDefault
+} from '../lib/events'
+
+const { document } = window
+const LEFT_MOUSE   = 1
+const { abs, min } = Math
 
 const EmberSnip = Component.extend({
   layout,
@@ -40,7 +51,7 @@ const EmberSnip = Component.extend({
     this._startPoint   = ZERO_POINT
     this._currentPoint = ZERO_POINT
     this._lastPoint    = ZERO_POINT
-    this._rectangle    = EMPTY_RECTANGLE
+    this._rectangle    = ZERO_RECTANGLE
 
     this.move = this.move.bind(this)
     this.end  = this.end.bind(this)
@@ -124,7 +135,7 @@ const EmberSnip = Component.extend({
   },
 
   hideSnipee() {
-    this._updateSnipee(EMPTY_RECTANGLE)
+    this._updateSnipee(ZERO_RECTANGLE)
   },
 
   _eventDataForPoint(e) {
@@ -170,7 +181,7 @@ const EmberSnip = Component.extend({
     top  += ($el.outerHeight(false) - height) / 2
     left += ($el.outerWidth(false)  - width)  / 2
 
-    this.set('_dimensions', new ElementDimension({
+    this.set('_dimensions', new ElementDimensions({
       top,
       left,
       width,
@@ -228,39 +239,6 @@ const EmberSnip = Component.extend({
     this.set('_rectangle', rect)
   }
 })
-
-function Point(x, y) {
-  this.x = x | 0
-  this.y = y | 0
-
-  //Object.freeze(this)
-}
-
-function Rectangle(x1, y1, x2, y2) {
-  this.x1 = x1 | 0
-  this.y1 = y1 | 0
-  this.x2 = x2 | 0
-  this.y2 = y2 | 0
-
-  //Object.freeze(this)
-}
-
-function ElementDimension(props) {
-  this.top        = props.top        | 0
-  this.left       = props.left       | 0
-  this.width      = props.width      | 0
-  this.height     = props.height     | 0
-  this.scrollTop  = props.scrollTop  | 0
-  this.scrollLeft = props.scrollLeft | 0
-
-  //Object.freeze(this)
-}
-
-if (Symbol.toStringTag) {
-  Point.prototype[Symbol.toStringTag] = 'Point'
-  Rectangle.prototype[Symbol.toStringTag] = 'Rectangle'
-  ElementDimension.prototype[Symbol.toStringTag] = 'ElementDimension'
-}
 
 function computedInt() {
   return computed({

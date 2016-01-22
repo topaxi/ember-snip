@@ -5,16 +5,18 @@
   Y: {{input type="number" value=snapY}}
 </div>
 <div>
-  offsetTop:  {{input type="number" value=offsetTop}}
-  offsetLeft: {{input type="number" value=offsetLeft}}
-  Constrain:  {{input type="checkbox" checked=cancelOffset}}
+  offsetTop:     {{input type="number" value=offsetTop}}
+  offsetRight:   {{input type="number" value=offsetRight}}
+  offsetBottom:  {{input type="number" value=offsetBottom}}
+  offsetLeft:    {{input type="number" value=offsetLeft}}
+  Constrain:     {{input type="checkbox" checked=cancelOffset}}
 </div>
 
 {{#ember-snip
   offsetTop    = offsetTop
   offsetLeft   = offsetLeft
-  offsetRight  = 100
-  offsetBottom = 100
+  offsetRight  = offsetRight
+  offsetBottom = offsetBottom
   cancelOffset = cancelOffset
   on-end       = undefined
   as |snip|}}
