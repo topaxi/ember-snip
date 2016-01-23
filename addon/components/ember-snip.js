@@ -177,7 +177,12 @@ const EmberSnip = Component.extend({
     let $el = this.$()
 
     let { top, left, height, width } = this.element.getBoundingClientRect()
-    let { scrollTop, scrollLeft }    = this.element
+    let {
+      scrollTop,
+      scrollLeft,
+      scrollWidth,
+      scrollHeight
+    } = this.element
 
     top  += ($el.outerHeight(false) - height) / 2
     left += ($el.outerWidth(false)  - width)  / 2
@@ -188,7 +193,9 @@ const EmberSnip = Component.extend({
       width,
       height,
       scrollTop,
-      scrollLeft
+      scrollLeft,
+      scrollWidth,
+      scrollHeight
     }))
   },
 

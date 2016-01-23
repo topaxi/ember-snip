@@ -21,10 +21,10 @@ export default Component.extend({
   minX: oneWay('_offsetLeft'),
   minY: oneWay('_offsetTop'),
   maxX: computed('_offsetRight', '_dimensions', function() {
-    return this.get('_dimensions.width') - this.get('_offsetRight')
+    return this.get('_dimensions.scrollWidth') - this.get('_offsetRight')
   }),
   maxY: computed('_offsetBottom', '_dimensions', function() {
-    return this.get('_dimensions.height') - this.get('_offsetBottom')
+    return this.get('_dimensions.scrollHeight') - this.get('_offsetBottom')
   }),
 
   snapX: computedInt(),
