@@ -31,7 +31,7 @@ const EmberSnip = Component.extend({
 
   disabled: false,
   cancel:   null,
-  distance: 0,
+  distance: computedInt(),
 
   cancelOffset: true,
   offsetTop:    computedInt(),
