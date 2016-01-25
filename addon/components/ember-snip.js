@@ -72,7 +72,7 @@ const EmberSnip = Component.extend({
       return
     }
 
-    let point = this._eventToPoint(this._eventDataForPoint(e))
+    let point = this._eventToPoint(e)
 
     this._updateElementDimensions()
 
@@ -103,7 +103,7 @@ const EmberSnip = Component.extend({
   },
 
   move(e) {
-    let point = this._eventToPoint(this._eventDataForPoint(e))
+    let point = this._eventToPoint(e)
 
     if (!this._moved && this._notMovedBeyondDistance(point)) {
       return
@@ -145,7 +145,8 @@ const EmberSnip = Component.extend({
   },
 
   _eventToPoint(e) {
-    return new Point(e.pageX, e.pageY)
+    let { pageX, pageY } = this._eventDataForPoint(e)
+    return new Point(pageX, pageY)
   },
 
   _clickedOffset(point) {
