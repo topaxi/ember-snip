@@ -8,6 +8,10 @@ import {
   htmlSafe
 } from 'ember-string'
 
+import Rectangle, {
+  ZERO_RECTANGLE
+} from '../lib/rectangle'
+
 import computedInt      from '../lib/computed-int'
 import computedSnapAxis from '../lib/computed-snap-axis'
 
@@ -51,6 +55,8 @@ export default Component.extend({
     let y1 = this.get('y1')
     let x2 = this.get('x2')
     let y2 = this.get('y2')
+
+    this.sendAction('on-draw', new Rectangle(x1, y1, x2, y2))
 
     return htmlSafe(
       `top:${y1}px;` +
