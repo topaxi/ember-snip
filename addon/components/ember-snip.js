@@ -1,5 +1,4 @@
 import Component from 'ember-component'
-import computed  from 'ember-computed'
 import layout    from '../templates/components/ember-snip'
 
 import computedInt       from '../lib/computed-int'
