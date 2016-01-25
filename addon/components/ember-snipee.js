@@ -43,8 +43,12 @@ export default Component.extend({
     this.set('snapY', 1)
   },
 
+  createRectangle(x1, y1, x2, y2) {
+    return new Rectangle(x1, y1, x2, y2)
+  },
+
   style: computed('x1', 'y1', 'x2', 'y2', function style() {
-    let rectangle = new Rectangle(
+    let rectangle = this.createRectangle(
       this.get('x1'),
       this.get('y1'),
       this.get('x2'),
