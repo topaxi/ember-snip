@@ -84,7 +84,6 @@ const EmberSnip = Component.extend({
 
     this._setStartPoint(point)
     this._setCurrentPoint(point)
-    this._setLastPoint(point)
 
     this._toggleMoveListeners(true)
 
@@ -111,7 +110,6 @@ const EmberSnip = Component.extend({
     }
 
     this._moved = true
-    this._setLastPoint(this._currentPoint)
     this._setCurrentPoint(point)
 
     let rect = this._createRectangle(
@@ -208,6 +206,7 @@ const EmberSnip = Component.extend({
   },
 
   _setCurrentPoint(point) {
+    this._setLastPoint(this._currentPoint)
     this._setPoint('_currentPoint', point)
   },
 
