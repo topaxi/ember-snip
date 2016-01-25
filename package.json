@@ -1,7 +1,7 @@
 {
   "name": "ember-snip",
-  "version": "0.1.3",
-  "description": "The default blueprint for ember-cli addons.",
+  "version": "0.1.4",
+  "description": " Create selection boxes for selection, cutting pictures etc.",
   "directories": {
     "doc": "doc",
     "test": "tests"
