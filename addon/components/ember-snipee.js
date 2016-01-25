@@ -4,7 +4,10 @@ import computed, {
   oneWay
 } from 'ember-computed'
 
-import Rectangle        from '../lib/rectangle'
+import Rectangle, {
+  ZERO_RECTANGLE
+} from '../lib/rectangle'
+
 import computedInt      from '../lib/computed-int'
 import computedSnapAxis from '../lib/computed-snap-axis'
 
@@ -13,7 +16,7 @@ export default Component.extend({
 
   attributeBindings: [ 'style' ],
 
-  rectangle: null,
+  rectangle: ZERO_RECTANGLE,
 
   minX: oneWay('_offsetLeft'),
   minY: oneWay('_offsetTop'),

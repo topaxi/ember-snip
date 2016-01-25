@@ -40,18 +40,13 @@ const EmberSnip = Component.extend({
 
   _moved:        false,
   _dimensions:   null,
-  _startPoint:   null,
-  _currentPoint: null,
-  _lastPoint:    null,
-  _rectangle:    null,
+  _startPoint:   ZERO_POINT,
+  _currentPoint: ZERO_POINT,
+  _lastPoint:    ZERO_POINT,
+  _rectangle:    ZERO_RECTANGLE,
 
   init() {
     this._super(...arguments)
-
-    this._startPoint   = ZERO_POINT
-    this._currentPoint = ZERO_POINT
-    this._lastPoint    = ZERO_POINT
-    this._rectangle    = ZERO_RECTANGLE
 
     this.move = this.move.bind(this)
     this.end  = this.end.bind(this)
