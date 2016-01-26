@@ -17,8 +17,8 @@ export default function computedSnapAxis(x1, x2, offsetProperty, X) {
 
   return computed(...dependentKeys, function snapAxis() {
     let rect    = this.get('rectangle')
-    let snapTo  = max(this.get(snapProperty) | 0, 1)
-    let offset  = this.get(offsetProperty) | 0
+    let snapTo  = max(this.get(snapProperty), 1)
+    let offset  = this.get(offsetProperty)
     let roundFn = rect[x1] > rect[x2] ? ceil : floor
     let x       = roundTo(rect[x1] - offset, snapTo, roundFn) + offset
 

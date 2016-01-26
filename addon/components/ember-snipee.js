@@ -8,7 +8,7 @@ import Rectangle, {
   ZERO_RECTANGLE
 } from '../lib/rectangle'
 
-import computedInt      from '../lib/computed-int'
+import computedNumber   from '../lib/computed-number'
 import computedSnapAxis from '../lib/computed-snap-axis'
 
 export default Component.extend({
@@ -27,13 +27,13 @@ export default Component.extend({
     return this.get('_dimensions.scrollHeight') - this.get('_offsetBottom')
   }),
 
-  snapX: computedInt(),
-  snapY: computedInt(),
+  snapX: computedNumber(),
+  snapY: computedNumber(),
 
   _dimensions:       null,
   _restrictToOffset: null,
-  _offsetTop:        null,
-  _offsetLeft:       null,
+  _offsetTop:        computedNumber(),
+  _offsetLeft:       computedNumber(),
 
   x1: computedSnapAxis('x1', 'x2', '_offsetLeft', 'X'),
   y1: computedSnapAxis('y1', 'y2', '_offsetTop',  'Y'),

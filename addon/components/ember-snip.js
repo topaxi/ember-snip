@@ -1,7 +1,7 @@
 import Component from 'ember-component'
 import layout    from '../templates/components/ember-snip'
 
-import computedInt       from '../lib/computed-int'
+import computedNumber    from '../lib/computed-number'
 import ElementDimensions from '../lib/element-dimensions'
 
 import Point, {
@@ -30,13 +30,13 @@ const EmberSnip = Component.extend({
 
   disabled: false,
   cancel:   null,
-  distance: computedInt(),
+  distance: computedNumber(),
 
   cancelOffset: true,
-  offsetTop:    computedInt(),
-  offsetLeft:   computedInt(),
-  offsetRight:  computedInt(),
-  offsetBottom: computedInt(),
+  offsetTop:    computedNumber(),
+  offsetLeft:   computedNumber(),
+  offsetRight:  computedNumber(),
+  offsetBottom: computedNumber(),
 
   _moved:        false,
   _dimensions:   null,
