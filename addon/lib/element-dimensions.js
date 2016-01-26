@@ -1,12 +1,12 @@
 export default function ElementDimensions(props) {
-  this.top          = props.top          | 0
-  this.left         = props.left         | 0
-  this.width        = props.width        | 0
-  this.height       = props.height       | 0
-  this.scrollTop    = props.scrollTop    | 0
-  this.scrollLeft   = props.scrollLeft   | 0
-  this.scrollWidth  = props.scrollWidth  | 0
-  this.scrollHeight = props.scrollHeight | 0
+  this.top          = +props.top
+  this.left         = +props.left
+  this.width        = +props.width
+  this.height       = +props.height
+  this.scrollTop    = +props.scrollTop
+  this.scrollLeft   = +props.scrollLeft
+  this.scrollWidth  = +props.scrollWidth
+  this.scrollHeight = +props.scrollHeight
 
   //Object.freeze(this)
 }
