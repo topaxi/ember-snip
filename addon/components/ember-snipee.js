@@ -35,10 +35,10 @@ export default Component.extend({
   _offsetTop:        computedNumber(),
   _offsetLeft:       computedNumber(),
 
-  x1: computedSnapAxis('x1', 'x2', '_offsetLeft', 'X'),
-  y1: computedSnapAxis('y1', 'y2', '_offsetTop',  'Y'),
-  x2: computedSnapAxis('x2', 'x1', '_offsetLeft', 'X'),
-  y2: computedSnapAxis('y2', 'y1', '_offsetTop',  'Y'),
+  x1: computedSnapAxis('x2', '_offsetLeft', 'X'),
+  y1: computedSnapAxis('y2', '_offsetTop',  'Y'),
+  x2: computedSnapAxis('x1', '_offsetLeft', 'X'),
+  y2: computedSnapAxis('y1', '_offsetTop',  'Y'),
 
   init(...args) {
     this._super(...args)

@@ -2,7 +2,7 @@ import computed from 'ember-computed'
 
 const { floor, ceil, min, max } = Math
 
-export default function computedSnapAxis(x1, x2, offsetProperty, X) {
+export default function computedSnapAxis(x2, offsetProperty, X) {
   let snapProperty = `snap${X}`
   let minX         = `min${X}`
   let maxX         = `max${X}`
@@ -15,7 +15,7 @@ export default function computedSnapAxis(x1, x2, offsetProperty, X) {
     '_restrictToOffset'
   ]
 
-  return computed(...dependentKeys, function snapAxis() {
+  return computed(...dependentKeys, function snapAxis(x1) {
     let rect    = this.get('rectangle')
     let snapTo  = max(this.get(snapProperty), 1)
     let offset  = this.get(offsetProperty)
@@ -23,7 +23,7 @@ export default function computedSnapAxis(x1, x2, offsetProperty, X) {
     let x       = roundTo(rect[x1] - offset, snapTo, roundFn) + offset
 
     if (this.get('_restrictToOffset')) {
-      return min(this.get(maxX), max(this.get(minX), x))
+      x = min(this.get(maxX), max(this.get(minX), x))
     }
 
     return x
