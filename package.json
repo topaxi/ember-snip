@@ -1,6 +1,6 @@
 {
   "name": "ember-snip",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": " Create selection boxes for selection, cutting pictures etc.",
   "directories": {
     "doc": "doc",
