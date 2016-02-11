@@ -4,6 +4,10 @@ import layout    from '../templates/components/ember-snip'
 import computedNumber    from '../lib/computed-number'
 import ElementDimensions from '../lib/element-dimensions'
 
+import {
+  bind
+} from 'ember-runloop'
+
 import Point, {
   ZERO_POINT
 } from '../lib/point'
@@ -48,8 +52,8 @@ const EmberSnip = Component.extend({
   init() {
     this._super(...arguments)
 
-    this.move = this.move.bind(this)
-    this.end  = this.end.bind(this)
+    this.move = bind(this, this.move)
+    this.end  = bind(this, this.end)
   },
 
   _toggleMoveListeners(enable) {
