@@ -85,8 +85,6 @@ const EmberSnip = Component.extend({
     this._setCurrentPoint(point)
 
     this._toggleMoveListeners(true)
-
-    this.sendAction('on-start', e)
   },
 
   'on-end'(e, self) {
@@ -94,11 +92,14 @@ const EmberSnip = Component.extend({
   },
 
   end(e) {
-    this._moved = false
     this._toggleMoveListeners(false)
-    this.sendAction('on-end', e, {
-      hideSnipee: () => this.hideSnipee()
-    })
+
+    if (this._moved) {
+      this._moved = false
+      this.sendAction('on-end', e, {
+        hideSnipee: () => this.hideSnipee()
+      })
+    }
   },
 
   move(e) {
@@ -108,7 +109,11 @@ const EmberSnip = Component.extend({
       return
     }
 
-    this._moved = true
+    if (!this._moved) {
+      this.sendAction('on-start', e)
+      this._moved = true
+    }
+
     this._setCurrentPoint(point)
 
     let rect = this._createRectangle(
