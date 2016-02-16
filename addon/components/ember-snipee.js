@@ -1,4 +1,9 @@
 import Component from 'ember-component'
+import observer  from 'ember-metal/observer'
+
+import {
+  once
+} from 'ember-runloop'
 
 import computed, {
   oneWay
@@ -8,6 +13,7 @@ import Rectangle, {
   ZERO_RECTANGLE
 } from '../lib/rectangle'
 
+import setIfChanged     from '../lib/set-if-changed'
 import computedNumber   from '../lib/computed-number'
 import computedSnapAxis from '../lib/computed-snap-axis'
 
@@ -30,15 +36,31 @@ export default Component.extend({
   snapX: computedNumber(),
   snapY: computedNumber(),
 
+  x1: computedNumber(),
+  y1: computedNumber(),
+  x2: computedNumber(),
+  y2: computedNumber(),
+
   _dimensions:       null,
   _restrictToOffset: null,
   _offsetTop:        computedNumber(),
   _offsetLeft:       computedNumber(),
 
-  x1: computedSnapAxis('x2', '_offsetLeft', 'X'),
-  y1: computedSnapAxis('y2', '_offsetTop',  'Y'),
-  x2: computedSnapAxis('x1', '_offsetLeft', 'X'),
-  y2: computedSnapAxis('y1', '_offsetTop',  'Y'),
+  _x1: computedSnapAxis('x1', 'x2', '_offsetLeft', 'X'),
+  _y1: computedSnapAxis('y1', 'y2', '_offsetTop',  'Y'),
+  _x2: computedSnapAxis('x2', 'x1', '_offsetLeft', 'X'),
+  _y2: computedSnapAxis('y2', 'y1', '_offsetTop',  'Y'),
+
+  _observeRectangle: observer('rectangle', function() {
+    once(this, this._processRectangle)
+  }),
+
+  _processRectangle() {
+    setIfChanged(this, 'x1', this.get('_x1'))
+    setIfChanged(this, 'y1', this.get('_y1'))
+    setIfChanged(this, 'x2', this.get('_x2'))
+    setIfChanged(this, 'y2', this.get('_y2'))
+  },
 
   init(...args) {
     this._super(...args)
