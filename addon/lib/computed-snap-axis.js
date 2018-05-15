@@ -1,35 +1,35 @@
-import computed from 'ember-computed'
+import { computed } from "@ember/object";
 
-const { floor, ceil, min, max } = Math
+const { floor, ceil, min, max } = Math;
 
 export default function computedSnapAxis(x1, x2, offsetProperty, X) {
-  let snapProperty = `snap${X}`
-  let minX         = `min${X}`
-  let maxX         = `max${X}`
+  let snapProperty = `snap${X}`;
+  let minX = `min${X}`;
+  let maxX = `max${X}`;
   let dependentKeys = [
-    'rectangle',
+    "rectangle",
     offsetProperty,
     snapProperty,
     minX,
     maxX,
-    '_restrictToOffset'
-  ]
+    "_restrictToOffset"
+  ];
 
   return computed(...dependentKeys, function snapAxis() {
-    let rect    = this.get('rectangle')
-    let snapTo  = max(this.get(snapProperty), 1)
-    let offset  = this.get(offsetProperty)
-    let roundFn = rect[x1] > rect[x2] ? ceil : floor
-    let x       = roundTo(rect[x1] - offset, snapTo, roundFn) + offset
+    let rect = this.get("rectangle");
+    let snapTo = max(this.get(snapProperty), 1);
+    let offset = this.get(offsetProperty);
+    let roundFn = rect[x1] > rect[x2] ? ceil : floor;
+    let x = roundTo(rect[x1] - offset, snapTo, roundFn) + offset;
 
-    if (this.get('_restrictToOffset')) {
-      x = min(this.get(maxX), max(this.get(minX), x))
+    if (this.get("_restrictToOffset")) {
+      x = min(this.get(maxX), max(this.get(minX), x));
     }
 
-    return x
-  }).readOnly()
+    return x;
+  }).readOnly();
 }
 
 function roundTo(value, to, fn) {
-  return fn(value / to) * to
+  return fn(value / to) * to;
 }

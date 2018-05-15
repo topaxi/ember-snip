@@ -1,1 +1,1 @@
-export { default } from 'ember-snip/components/ember-snipee';
+export { default } from "ember-snip/components/ember-snipee";

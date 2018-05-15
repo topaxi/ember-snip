@@ -1,25 +1,26 @@
-import { moduleForComponent, test } from 'ember-qunit';
-import hbs from 'htmlbars-inline-precompile';
+import { module, test } from "qunit";
+import { setupRenderingTest } from "ember-qunit";
+import { render, find } from "@ember/test-helpers";
+import hbs from "htmlbars-inline-precompile";
 
-moduleForComponent('ember-snipee', 'Integration | Component | ember snipee', {
-  integration: true
-});
+module("Integration | Component | ember snipee", function(hooks) {
+  setupRenderingTest(hooks);
 
-test('it renders', function(assert) {
-  
-  // Set any properties with this.set('myProperty', 'value');
-  // Handle any actions with this.on('myAction', function(val) { ... });" + EOL + EOL +
+  test("it renders", async function(assert) {
+    // Set any properties with this.set('myProperty', 'value');
+    // Handle any actions with this.on('myAction', function(val) { ... });" + EOL + EOL +
 
-  this.render(hbs`{{ember-snipee}}`);
+    await render(hbs`{{ember-snipee}}`);
 
-  assert.equal(this.$().text().trim(), '');
+    assert.equal(find("*").textContent.trim(), "");
 
-  // Template block usage:" + EOL +
-  this.render(hbs`
-    {{#ember-snipee}}
-      template block text
-    {{/ember-snipee}}
-  `);
+    // Template block usage:" + EOL +
+    await render(hbs`
+      {{#ember-snipee}}
+        template block text
+      {{/ember-snipee}}
+    `);
 
-  assert.equal(this.$().text().trim(), 'template block text');
+    assert.equal(find("*").textContent.trim(), "template block text");
+  });
 });
