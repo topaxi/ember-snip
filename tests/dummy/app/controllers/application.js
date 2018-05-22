@@ -1,4 +1,4 @@
-import Controller from "@ember/controller";
+import Controller from '@ember/controller'
 
 export default Controller.extend({
   snapX: 100,
@@ -7,5 +7,5 @@ export default Controller.extend({
   offsetTop: 25,
   offsetLeft: 50,
 
-  cancelOffset: true
-});
+  cancelOffset: true,
+})

@@ -1,12 +1,12 @@
-import { computed } from "@ember/object";
+import { computed } from '@ember/object'
 
 export default function computedNumber() {
   return computed({
     set: toNumber,
-    get: toNumber
-  });
+    get: toNumber,
+  })
 }
 
 function toNumber(key, value = 0) {
-  return Number(value);
+  return Number(value)
 }
